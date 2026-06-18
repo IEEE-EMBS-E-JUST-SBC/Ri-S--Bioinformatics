@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ri-Sō 理創 Research Program 2026 — IEEE EMBS E-JUST</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Serif+JP:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #0f1117;
+  --ink2: #2c2f3a;
+  --muted: #6b7280;
+  --border: rgba(0,0,0,0.08);
+  --bg: #f5f4f0;
+  --card: #ffffff;
+  --accent-blue: #1a56db;
+  --accent-teal: #0d9488;
+  --accent-amber: #d97706;
+  --gold: #b8860b;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);line-height:1.6;overflow-x:hidden;}
+
+/* ── HERO ── */
+.hero{
+  background: var(--ink);
+  color:#fff;
+  padding:5rem 2rem 4rem;
+  text-align:center;
+  position:relative;
+  overflow:hidden;
+}
+.hero::before{
+  content:'';
+  position:absolute;inset:0;
+  background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(26,86,219,0.18) 0%, transparent 70%);
+  pointer-events:none;
+}
+.kamon{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:72px;height:72px;border-radius:50%;
+  border:1.5px solid rgba(255,255,255,0.25);
+  margin-bottom:2rem;
+  font-family:'Noto Serif JP',serif;
+  font-size:1.8rem;color:rgba(255,255,255,0.9);
+  position:relative;
+}
+.kamon::before{
+  content:'';
+  position:absolute;inset:-6px;border-radius:50%;
+  border:0.5px solid rgba(255,255,255,0.12);
+}
+.eyebrow{
+  font-size:0.75rem;letter-spacing:0.14em;text-transform:uppercase;
+  color:rgba(255,255,255,0.5);margin-bottom:0.75rem;font-weight:500;
+}
+.hero h1{
+  font-size:clamp(2rem,5vw,3.25rem);font-weight:700;letter-spacing:-0.02em;
+  margin-bottom:0.5rem;
+}
+.hero h1 .kanji{
+  font-family:'Noto Serif JP',serif;font-weight:700;
+  color:rgba(255,255,255,0.75);font-size:0.8em;margin-left:0.4rem;
+}
+.hero-sub{
+  font-size:1rem;color:rgba(255,255,255,0.55);
+  max-width:520px;margin:1.2rem auto 0;font-weight:400;
+}
+.badges{
+  display:flex;gap:0.75rem;justify-content:center;flex-wrap:wrap;
+  margin-top:2rem;
+}
+.badge{
+  font-size:0.72rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;
+  padding:0.35rem 0.9rem;border-radius:999px;
+  border:0.5px solid rgba(255,255,255,0.2);
+  color:rgba(255,255,255,0.7);background:rgba(255,255,255,0.06);
+}
+
+/* ── TIMELINE STRIP ── */
+.timeline-strip{
+  background:var(--ink2);
+  overflow:hidden;
+  padding:0.85rem 0;
+  position:relative;
+}
+.timeline-track{
+  display:flex;gap:3rem;
+  animation:slide 22s linear infinite;
+  white-space:nowrap;
+  width:max-content;
+}
+@keyframes slide{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.t-item{
+  display:inline-flex;align-items:center;gap:0.6rem;
+  font-size:0.75rem;font-weight:500;color:rgba(255,255,255,0.5);
+  letter-spacing:0.06em;
+}
+.t-dot{width:6px;height:6px;border-radius:50%;background:var(--accent-teal);flex-shrink:0;}
+
+/* ── PROJECTS ── */
+.section{max-width:1100px;margin:0 auto;padding:4rem 2rem;}
+.section-label{
+  font-size:0.7rem;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:2rem;
+  display:flex;align-items:center;gap:0.75rem;
+}
+.section-label::after{content:'';flex:1;height:0.5px;background:var(--border);}
+
+.projects{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:1.5rem;}
+
+.project-card{
+  background:var(--card);
+  border-radius:16px;
+  border:0.5px solid var(--border);
+  overflow:hidden;
+  text-decoration:none;color:inherit;
+  display:block;
+  transition:transform 0.25s ease, box-shadow 0.25s ease;
+  position:relative;
+}
+.project-card:hover{
+  transform:translateY(-4px);
+  box-shadow:0 16px 40px rgba(0,0,0,0.1);
+}
+
+.card-vis{
+  height:200px;position:relative;overflow:hidden;
+}
+
+/* Viral card vis */
+.vis-viral{background:#0a0f1e;}
+.vis-viral canvas{position:absolute;inset:0;width:100%;height:100%;}
+
+/* Lipid card vis */
+.vis-lipid{background:#0a1a12;}
+.vis-lipid canvas{position:absolute;inset:0;width:100%;height:100%;}
+
+.card-body{padding:1.75rem;}
+.venue-pill{
+  font-size:0.68rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;
+  padding:0.25rem 0.7rem;border-radius:999px;margin-bottom:1rem;
+  display:inline-block;
+}
+.venue-blue{background:#dbeafe;color:#1e40af;}
+.venue-teal{background:#ccfbf1;color:#0f766e;}
+
+.card-title{font-size:1.25rem;font-weight:600;letter-spacing:-0.01em;margin-bottom:0.6rem;line-height:1.3;}
+.card-desc{font-size:0.9rem;color:var(--muted);margin-bottom:1.4rem;line-height:1.6;}
+.tags{display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:1.5rem;}
+.tag{
+  font-size:0.72rem;font-weight:500;padding:0.25rem 0.65rem;
+  border-radius:4px;background:#f1f5f9;color:#475569;
+}
+.cta{
+  display:flex;align-items:center;justify-content:space-between;
+  font-size:0.85rem;font-weight:600;color:var(--accent-blue);
+  border-top:0.5px solid var(--border);padding-top:1.25rem;
+  margin-top:0.25rem;
+}
+.cta-arrow{
+  width:28px;height:28px;border-radius:50%;
+  border:0.5px solid currentColor;display:flex;align-items:center;justify-content:center;
+  transition:background 0.2s;font-size:14px;
+}
+.project-card:hover .cta-arrow{background:var(--accent-blue);color:#fff;border-color:var(--accent-blue);}
+.project-card.lipid:hover .cta-arrow{background:var(--accent-teal);color:#fff;border-color:var(--accent-teal);}
+.project-card.lipid .cta{color:var(--accent-teal);}
+
+/* ── META GRID ── */
+.meta-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:1px;background:var(--border);
+  border:0.5px solid var(--border);border-radius:12px;overflow:hidden;
+  margin-top:3rem;
+}
+.meta-cell{
+  background:var(--card);padding:1.5rem;
+}
+.meta-label{font-size:0.72rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);font-weight:500;margin-bottom:0.4rem;}
+.meta-value{font-size:1.05rem;font-weight:600;color:var(--ink);}
+
+/* ── FOOTER ── */
+footer{
+  text-align:center;padding:2.5rem 2rem;border-top:0.5px solid var(--border);
+  font-size:0.8rem;color:var(--muted);
+}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="kamon">理</div>
+  <div class="eyebrow">IEEE EMBS E-JUST · Summer 2026</div>
+  <h1>Ri-Sō Research Program<span class="kanji">理創</span></h1>
+  <p class="hero-sub">Advanced computational biomedical research targeting IEEE BIBM &amp; EMBC 2026 — where rigorous science meets clinical impact.</p>
+  <div class="badges">
+    <span class="badge">Computational Biology</span>
+    <span class="badge">Deep Learning</span>
+    <span class="badge">Precision Medicine</span>
+    <span class="badge">IEEE BIBM 2026</span>
+    <span class="badge">IEEE EMBC 2026</span>
+  </div>
+</div>
+
+<!-- SCROLL TICKER -->
+<div class="timeline-strip">
+  <div class="timeline-track" id="ticker">
+    <span class="t-item"><span class="t-dot"></span>Jun 20 — Kickoff &amp; Data Access</span>
+    <span class="t-item"><span class="t-dot"></span>Jul 10 — Pipeline Implementation</span>
+    <span class="t-item"><span class="t-dot"></span>Aug 10 — Model Training &amp; Integration</span>
+    <span class="t-item"><span class="t-dot"></span>Aug 30 — Validation &amp; Explainability</span>
+    <span class="t-item"><span class="t-dot"></span>Sep 15 — Final Submission</span>
+    <span class="t-item"><span class="t-dot"></span>RISO AI Research Consortium · E-JUST</span>
+    <span class="t-item"><span class="t-dot"></span>Jun 20 — Kickoff &amp; Data Access</span>
+    <span class="t-item"><span class="t-dot"></span>Jul 10 — Pipeline Implementation</span>
+    <span class="t-item"><span class="t-dot"></span>Aug 10 — Model Training &amp; Integration</span>
+    <span class="t-item"><span class="t-dot"></span>Aug 30 — Validation &amp; Explainability</span>
+    <span class="t-item"><span class="t-dot"></span>Sep 15 — Final Submission</span>
+    <span class="t-item"><span class="t-dot"></span>RISO AI Research Consortium · E-JUST</span>
+  </div>
+</div>
+
+<!-- PROJECTS -->
+<div class="section">
+  <div class="section-label">2026 Research Tracks</div>
+  <div class="projects">
+
+    <!-- VIRAL -->
+    <a href="viral_project.html" class="project-card">
+      <div class="card-vis vis-viral">
+        <canvas id="viralCanvas"></canvas>
+      </div>
+      <div class="card-body">
+        <div class="venue-pill venue-blue">IEEE EMBC 2026</div>
+        <div class="card-title">Viral Mutation Hotspot Prediction</div>
+        <div class="card-desc">Predicting high-risk viral mutation hotspots using structural, evolutionary, and protein language model embeddings for proactive vaccine design.</div>
+        <div class="tags">
+          <span class="tag">ESM-2 Embeddings</span>
+          <span class="tag">CNN-LSTM</span>
+          <span class="tag">SHAP</span>
+          <span class="tag">Virology</span>
+        </div>
+        <div class="cta">
+          <span>View Project Details</span>
+          <span class="cta-arrow">→</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- LIPID -->
+    <a href="lipid_project.html" class="project-card lipid">
+      <div class="card-vis vis-lipid">
+        <canvas id="lipidCanvas"></canvas>
+      </div>
+      <div class="card-body">
+        <div class="venue-pill venue-teal">IEEE BIBM 2026</div>
+        <div class="card-title">Precision Lipid Therapy Prediction</div>
+        <div class="card-desc">In-silico responder prediction for ANGPTL3 inhibitors fusing Polygenic Risk Scores with EHR clinical phenotypes using multi-modal ML classification.</div>
+        <div class="tags">
+          <span class="tag">XGBoost</span>
+          <span class="tag">Polygenic Risk Scores</span>
+          <span class="tag">NHANES</span>
+          <span class="tag">Precision Medicine</span>
+        </div>
+        <div class="cta">
+          <span>View Project Details</span>
+          <span class="cta-arrow">→</span>
+        </div>
+      </div>
+    </a>
+
+  </div>
+
+  <!-- META -->
+  <div class="meta-grid">
+    <div class="meta-cell">
+      <div class="meta-label">Program</div>
+      <div class="meta-value">Ri-Sō 理創</div>
+    </div>
+    <div class="meta-cell">
+      <div class="meta-label">Institution</div>
+      <div class="meta-value">IEEE EMBS E-JUST</div>
+    </div>
+    <div class="meta-cell">
+      <div class="meta-label">Cohort</div>
+      <div class="meta-value">Summer 2026</div>
+    </div>
+    <div class="meta-cell">
+      <div class="meta-label">Target Venues</div>
+      <div class="meta-value">IEEE BIBM · EMBC</div>
+    </div>
+    <div class="meta-cell">
+      <div class="meta-label">Submission</div>
+      <div class="meta-value">15 September 2026</div>
+    </div>
+  </div>
+</div>
+
+<footer>© 2026 RISO AI Research Consortium · IEEE EMBS E-JUST · Ri-Sō 理創 Program</footer>
+
+<script>
+/* ── VIRAL CANVAS: floating genome nodes ── */
+(function(){
+  const c=document.getElementById('viralCanvas');
+  if(!c)return;
+  const ctx=c.getContext('2d');
+  let W,H,nodes=[];
+  function resize(){W=c.width=c.offsetWidth;H=c.height=c.offsetHeight;}
+  resize();window.addEventListener('resize',()=>{resize();init();});
+
+  function init(){
+    nodes=[];
+    const n=40;
+    for(let i=0;i<n;i++){
+      nodes.push({
+        x:Math.random()*W,y:Math.random()*H,
+        r:Math.random()*3+1.5,
+        vx:(Math.random()-0.5)*0.4,vy:(Math.random()-0.5)*0.4,
+        col:Math.random()<0.5?'#3b82f6':'#22d3ee',
+        a:Math.random()
+      });
+    }
+  }
+  init();
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle='#0a0f1e';ctx.fillRect(0,0,W,H);
+
+    /* connections */
+    for(let i=0;i<nodes.length;i++){
+      for(let j=i+1;j<nodes.length;j++){
+        const dx=nodes[i].x-nodes[j].x,dy=nodes[i].y-nodes[j].y;
+        const d=Math.sqrt(dx*dx+dy*dy);
+        if(d<90){
+          ctx.beginPath();
+          ctx.moveTo(nodes[i].x,nodes[i].y);
+          ctx.lineTo(nodes[j].x,nodes[j].y);
+          ctx.strokeStyle=`rgba(59,130,246,${0.18*(1-d/90)})`;
+          ctx.lineWidth=0.5;ctx.stroke();
+        }
+      }
+    }
+
+    /* nodes */
+    nodes.forEach(n=>{
+      n.a+=0.015;
+      const pulse=Math.sin(n.a)*0.3+0.7;
+      ctx.beginPath();
+      ctx.arc(n.x,n.y,n.r*pulse,0,Math.PI*2);
+      ctx.fillStyle=n.col;ctx.globalAlpha=0.85;ctx.fill();
+      ctx.globalAlpha=1;
+      n.x+=n.vx;n.y+=n.vy;
+      if(n.x<0||n.x>W)n.vx*=-1;
+      if(n.y<0||n.y>H)n.vy*=-1;
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ── LIPID CANVAS: flowing DNA helix strands ── */
+(function(){
+  const c=document.getElementById('lipidCanvas');
+  if(!c)return;
+  const ctx=c.getContext('2d');
+  let W,H,t=0;
+  function resize(){W=c.width=c.offsetWidth;H=c.height=c.offsetHeight;}
+  resize();window.addEventListener('resize',resize);
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle='#0a1a12';ctx.fillRect(0,0,W,H);
+    t+=0.018;
+    const steps=80,step=W/steps;
+
+    /* strand 1 */
+    ctx.beginPath();
+    for(let i=0;i<=steps;i++){
+      const x=i*step,y=H/2+Math.sin(i*0.18+t)*H*0.28;
+      i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+    }
+    ctx.strokeStyle='rgba(16,185,129,0.55)';ctx.lineWidth=1.5;ctx.stroke();
+
+    /* strand 2 */
+    ctx.beginPath();
+    for(let i=0;i<=steps;i++){
+      const x=i*step,y=H/2+Math.sin(i*0.18+t+Math.PI)*H*0.28;
+      i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+    }
+    ctx.strokeStyle='rgba(52,211,153,0.45)';ctx.lineWidth=1.5;ctx.stroke();
+
+    /* rungs */
+    for(let i=0;i<=steps;i+=3){
+      const x=i*step;
+      const y1=H/2+Math.sin(i*0.18+t)*H*0.28;
+      const y2=H/2+Math.sin(i*0.18+t+Math.PI)*H*0.28;
+      ctx.beginPath();ctx.moveTo(x,y1);ctx.lineTo(x,y2);
+      ctx.strokeStyle='rgba(110,231,183,0.18)';ctx.lineWidth=1;ctx.stroke();
+      ctx.beginPath();ctx.arc(x,y1,2,0,Math.PI*2);
+      ctx.fillStyle='#10b981';ctx.globalAlpha=0.9;ctx.fill();ctx.globalAlpha=1;
+      ctx.beginPath();ctx.arc(x,y2,2,0,Math.PI*2);
+      ctx.fillStyle='#34d399';ctx.globalAlpha=0.7;ctx.fill();ctx.globalAlpha=1;
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+</script>
+</body>
+</html>

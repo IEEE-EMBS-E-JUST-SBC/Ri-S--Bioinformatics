@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Viral Mutation Hotspot Prediction — Ri-Sō 理創 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Serif+JP:wght@700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0f1117;--ink2:#2c2f3a;--muted:#6b7280;
+  --border:rgba(0,0,0,0.08);--bg:#f5f4f0;--card:#ffffff;
+  --blue:#1a56db;--blue-light:#dbeafe;--blue-mid:#3b82f6;
+  --teal:#0d9488;--amber:#d97706;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);line-height:1.7;overflow-x:hidden;}
+
+/* ── HEADER ── */
+.page-header{
+  background:var(--ink);color:#fff;
+  padding:3rem 2rem 2.5rem;
+  border-bottom:2px solid var(--blue-mid);
+  position:relative;overflow:hidden;
+}
+.page-header::before{
+  content:'理創';
+  font-family:'Noto Serif JP',serif;font-size:10rem;font-weight:700;
+  position:absolute;right:-1rem;top:-2rem;
+  color:rgba(255,255,255,0.03);line-height:1;pointer-events:none;
+  user-select:none;
+}
+.back-link{
+  display:inline-flex;align-items:center;gap:0.5rem;
+  font-size:0.78rem;font-weight:500;color:rgba(255,255,255,0.45);
+  text-decoration:none;margin-bottom:1.5rem;letter-spacing:0.06em;
+  text-transform:uppercase;transition:color 0.2s;
+}
+.back-link:hover{color:rgba(255,255,255,0.8);}
+.program-badge{
+  display:inline-flex;align-items:center;gap:0.5rem;
+  font-size:0.7rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;
+  padding:0.3rem 0.8rem;border-radius:999px;
+  border:0.5px solid rgba(59,130,246,0.4);
+  color:rgba(59,130,246,0.9);background:rgba(59,130,246,0.08);
+  margin-bottom:1rem;
+}
+.program-badge .dot{width:5px;height:5px;border-radius:50%;background:#3b82f6;}
+h1{font-size:clamp(1.6rem,4vw,2.4rem);font-weight:700;letter-spacing:-0.02em;margin-bottom:0.5rem;}
+.header-sub{color:rgba(255,255,255,0.45);font-size:0.9rem;}
+
+/* ── LAYOUT ── */
+.container{max-width:1020px;margin:0 auto;padding:3rem 2rem;}
+.section-label{
+  font-size:0.68rem;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:1.5rem;
+  display:flex;align-items:center;gap:0.75rem;
+}
+.section-label::after{content:'';flex:1;height:0.5px;background:var(--border);}
+
+/* ── CARDS ── */
+.card{
+  background:var(--card);border:0.5px solid var(--border);
+  border-radius:12px;padding:2rem;margin-bottom:2rem;
+}
+.card h2{font-size:1.05rem;font-weight:600;margin-bottom:0.75rem;}
+.card p{font-size:0.9rem;color:var(--muted);line-height:1.7;}
+
+/* ── INTERACTIVE PIPELINE ── */
+.pipeline-wrap{
+  background:var(--ink);border-radius:16px;overflow:hidden;
+  margin-bottom:2rem;border:0.5px solid rgba(255,255,255,0.06);
+}
+.pipeline-controls{
+  display:flex;align-items:center;gap:0.5rem;padding:0.75rem 1rem;
+  border-bottom:0.5px solid rgba(255,255,255,0.06);
+}
+.dot-red{width:10px;height:10px;border-radius:50%;background:#ff5f57;}
+.dot-yellow{width:10px;height:10px;border-radius:50%;background:#ffbd2e;}
+.dot-green{width:10px;height:10px;border-radius:50%;background:#28c840;}
+.pipeline-title{font-size:0.72rem;color:rgba(255,255,255,0.3);margin-left:0.5rem;font-family:'JetBrains Mono',monospace;letter-spacing:0.05em;}
+.pipeline-svg-wrap{padding:1.5rem;overflow-x:auto;}
+
+/* ── STEP EXPLORER ── */
+.step-explorer{margin-bottom:2rem;}
+.step-tabs{
+  display:flex;gap:0.5rem;margin-bottom:1.5rem;flex-wrap:wrap;
+}
+.step-tab{
+  font-size:0.78rem;font-weight:600;
+  padding:0.5rem 1.1rem;border-radius:6px;
+  border:0.5px solid var(--border);
+  background:var(--card);color:var(--muted);
+  cursor:pointer;transition:all 0.2s;
+  display:flex;align-items:center;gap:0.5rem;
+}
+.step-tab.active{background:var(--blue);color:#fff;border-color:var(--blue);}
+.step-tab:hover:not(.active){border-color:var(--blue-mid);color:var(--blue);}
+.step-num{
+  width:18px;height:18px;border-radius:50%;
+  background:rgba(0,0,0,0.08);color:inherit;
+  font-size:0.65rem;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+}
+.step-tab.active .step-num{background:rgba(255,255,255,0.2);}
+
+.step-panels{position:relative;}
+.step-panel{display:none;}
+.step-panel.active{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+@media(max-width:640px){.step-panel.active{grid-template-columns:1fr;}}
+.step-card{
+  background:var(--card);border:0.5px solid var(--border);
+  border-radius:10px;padding:1.5rem;
+}
+.step-card-head{
+  font-size:0.72rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;
+  color:var(--blue);margin-bottom:0.75rem;
+}
+.step-card h3{font-size:1rem;font-weight:600;margin-bottom:0.5rem;}
+.step-card p{font-size:0.85rem;color:var(--muted);line-height:1.6;}
+.code-block{
+  background:#1e2433;border-radius:8px;padding:1rem;
+  font-family:'JetBrains Mono',monospace;font-size:0.75rem;
+  color:#a3b3c9;line-height:1.7;margin-top:0.75rem;overflow-x:auto;
+}
+.code-block .kw{color:#7dd3fc;}
+.code-block .fn{color:#86efac;}
+.code-block .str{color:#fca5a5;}
+.code-block .cm{color:#4b5563;}
+
+/* ── METRICS ── */
+.metrics-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1px;background:var(--border);border-radius:12px;overflow:hidden;border:0.5px solid var(--border);margin-bottom:2rem;}
+.metric{background:var(--card);padding:1.25rem 1.5rem;}
+.metric-label{font-size:0.7rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);font-weight:500;margin-bottom:0.35rem;}
+.metric-value{font-size:1.4rem;font-weight:700;color:var(--ink);letter-spacing:-0.02em;}
+.metric-sub{font-size:0.72rem;color:var(--muted);margin-top:0.2rem;}
+
+/* ── TIMELINE ── */
+.timeline{list-style:none;position:relative;padding-left:2rem;}
+.timeline::before{content:'';position:absolute;left:0.55rem;top:0;bottom:0;width:1.5px;background:var(--border);}
+.timeline li{
+  position:relative;margin-bottom:1.5rem;
+  padding-left:1rem;
+}
+.timeline li::before{
+  content:'';width:10px;height:10px;border-radius:50%;
+  background:var(--blue-mid);border:2px solid var(--bg);
+  position:absolute;left:-1.5rem;top:0.4rem;
+}
+.tl-date{font-size:0.72rem;font-weight:700;color:var(--blue);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:0.2rem;}
+.tl-title{font-size:0.9rem;font-weight:600;color:var(--ink);}
+.tl-desc{font-size:0.83rem;color:var(--muted);margin-top:0.2rem;}
+
+/* ── FOOTER ── */
+.page-footer{background:var(--ink);color:rgba(255,255,255,0.3);text-align:center;padding:2rem;font-size:0.78rem;}
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <div style="max-width:1020px;margin:0 auto;">
+    <a href="index.html" class="back-link">← All Projects</a>
+    <div class="program-badge"><span class="dot"></span>Ri-Sō 理創 · IEEE EMBS E-JUST</div>
+    <h1>Viral Mutation Hotspot Prediction</h1>
+    <p class="header-sub">Target Venue: IEEE EMBC 2026 &nbsp;·&nbsp; Summer Research Timeline</p>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- OVERVIEW -->
+  <div class="section-label">Project Overview</div>
+  <div class="card">
+    <p>Viral mutation hotspots are genomic loci under high evolutionary pressure. Identifying these regions <em>before</em> new variants emerge enables vaccine designers to prioritize epitope targets. This track builds machine learning models that predict high-risk mutation hotspots using an integrated view of structural conservation, evolutionary signals, and deep protein language model embeddings from ESM-2.</p>
+  </div>
+
+  <!-- PIPELINE DIAGRAM -->
+  <div class="section-label">End-to-End Pipeline</div>
+  <div class="pipeline-wrap">
+    <div class="pipeline-controls">
+      <span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span>
+      <span class="pipeline-title">viral_hotspot_pipeline.py — interactive flow</span>
+    </div>
+    <div class="pipeline-svg-wrap">
+      <svg width="100%" viewBox="0 0 900 520" role="img">
+        <title>Viral mutation prediction pipeline</title>
+        <desc>End-to-end workflow from raw genomes through feature extraction, model training, and explainability</desc>
+        <defs>
+          <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </marker>
+        </defs>
+
+        <!-- ── Row 0: Source ── -->
+        <g class="node-g" onclick="highlightNode('n-source')" id="n-source" style="cursor:pointer">
+          <rect x="340" y="20" width="220" height="48" rx="8" fill="#1e2c4a" stroke="#3b82f6" stroke-width="1"/>
+          <text x="450" y="40" text-anchor="middle" dominant-baseline="central" fill="#93c5fd" font-family="Inter,sans-serif" font-size="12" font-weight="600">Raw SARS-CoV-2 Genomes</text>
+          <text x="450" y="56" text-anchor="middle" dominant-baseline="central" fill="#4b6a9b" font-family="Inter,sans-serif" font-size="11">NCBI GenBank · 500–1000 sequences</text>
+        </g>
+
+        <!-- ── Arrow down ── -->
+        <line x1="450" y1="68" x2="450" y2="100" stroke="#3b82f6" stroke-width="1.5" marker-end="url(#arr)" stroke-opacity="0.5"/>
+        <text x="468" y="86" fill="#4b6a9b" font-family="Inter,sans-serif" font-size="10">MAFFT codon-aware</text>
+
+        <!-- ── Row 1: Alignment ── -->
+        <g onclick="highlightNode('n-align')" id="n-align" style="cursor:pointer">
+          <rect x="330" y="100" width="240" height="44" rx="8" fill="#1e2c4a" stroke="#6366f1" stroke-width="0.8"/>
+          <text x="450" y="120" text-anchor="middle" dominant-baseline="central" fill="#a5b4fc" font-family="Inter,sans-serif" font-size="12" font-weight="600">Codon-aware MSA</text>
+          <text x="450" y="134" text-anchor="middle" dominant-baseline="central" fill="#4b6a9b" font-family="Inter,sans-serif" font-size="11">~9,600 aligned codon positions</text>
+        </g>
+
+        <!-- ── Fork arrows ── -->
+        <line x1="380" y1="144" x2="160" y2="210" stroke="#22d3ee" stroke-width="1.2" stroke-opacity="0.5" marker-end="url(#arr)"/>
+        <line x1="450" y1="144" x2="450" y2="210" stroke="#a78bfa" stroke-width="1.2" stroke-opacity="0.5" marker-end="url(#arr)"/>
+        <line x1="520" y1="144" x2="740" y2="210" stroke="#34d399" stroke-width="1.2" stroke-opacity="0.5" marker-end="url(#arr)"/>
+
+        <!-- fork labels -->
+        <text x="245" y="178" text-anchor="middle" fill="#0e7490" font-family="Inter,sans-serif" font-size="10">structural</text>
+        <text x="450" y="178" text-anchor="middle" fill="#7c3aed" font-family="Inter,sans-serif" font-size="10">evolutionary</text>
+        <text x="655" y="178" text-anchor="middle" fill="#059669" font-family="Inter,sans-serif" font-size="10">embeddings</text>
+
+        <!-- ── Row 2: Feature Forks ── -->
+        <g onclick="highlightNode('n-struct')" id="n-struct" style="cursor:pointer">
+          <rect x="60" y="210" width="200" height="54" rx="8" fill="#102830" stroke="#22d3ee" stroke-width="0.8"/>
+          <text x="160" y="229" text-anchor="middle" dominant-baseline="central" fill="#67e8f9" font-family="Inter,sans-serif" font-size="12" font-weight="600">Structural Features</text>
+          <text x="160" y="248" text-anchor="middle" dominant-baseline="central" fill="#164e63" font-family="Inter,sans-serif" font-size="10">ConSurf · PSIPRED · Shannon entropy</text>
+          <text x="160" y="260" text-anchor="middle" dominant-baseline="central" fill="#164e63" font-family="Inter,sans-serif" font-size="10">RSA · B-factors</text>
+        </g>
+
+        <g onclick="highlightNode('n-evo')" id="n-evo" style="cursor:pointer">
+          <rect x="330" y="210" width="240" height="54" rx="8" fill="#1a1040" stroke="#a78bfa" stroke-width="0.8"/>
+          <text x="450" y="229" text-anchor="middle" dominant-baseline="central" fill="#c4b5fd" font-family="Inter,sans-serif" font-size="12" font-weight="600">Evolutionary Features</text>
+          <text x="450" y="248" text-anchor="middle" dominant-baseline="central" fill="#4c3680" font-family="Inter,sans-serif" font-size="10">dN/dS ratios · CAI · GC content</text>
+          <text x="450" y="260" text-anchor="middle" dominant-baseline="central" fill="#4c3680" font-family="Inter,sans-serif" font-size="10">Sliding-window selection pressure</text>
+        </g>
+
+        <g onclick="highlightNode('n-esm')" id="n-esm" style="cursor:pointer">
+          <rect x="640" y="210" width="200" height="54" rx="8" fill="#0a2010" stroke="#34d399" stroke-width="0.8"/>
+          <text x="740" y="229" text-anchor="middle" dominant-baseline="central" fill="#6ee7b7" font-family="Inter,sans-serif" font-size="12" font-weight="600">ESM-2 Embeddings</text>
+          <text x="740" y="248" text-anchor="middle" dominant-baseline="central" fill="#064e3b" font-family="Inter,sans-serif" font-size="10">1280-dim hidden-layer vectors</text>
+          <text x="740" y="260" text-anchor="middle" dominant-baseline="central" fill="#064e3b" font-family="Inter,sans-serif" font-size="10">per-residue protein LM repr.</text>
+        </g>
+
+        <!-- ── Merge arrows ── -->
+        <line x1="160" y1="264" x2="380" y2="330" stroke="#22d3ee" stroke-width="1.2" stroke-opacity="0.45" marker-end="url(#arr)"/>
+        <line x1="450" y1="264" x2="450" y2="330" stroke="#a78bfa" stroke-width="1.2" stroke-opacity="0.45" marker-end="url(#arr)"/>
+        <line x1="740" y1="264" x2="520" y2="330" stroke="#34d399" stroke-width="1.2" stroke-opacity="0.45" marker-end="url(#arr)"/>
+
+        <!-- ── Row 3: Fusion ── -->
+        <g onclick="highlightNode('n-fusion')" id="n-fusion" style="cursor:pointer">
+          <rect x="290" y="330" width="320" height="54" rx="8" fill="#1c1700" stroke="#f59e0b" stroke-width="1"/>
+          <text x="450" y="349" text-anchor="middle" dominant-baseline="central" fill="#fcd34d" font-family="Inter,sans-serif" font-size="12" font-weight="600">Unified Feature Matrix</text>
+          <text x="450" y="367" text-anchor="middle" dominant-baseline="central" fill="#78620a" font-family="Inter,sans-serif" font-size="11">N_codons × 1295 dims · SMOTE · Z-score norm</text>
+        </g>
+
+        <line x1="450" y1="384" x2="450" y2="414" stroke="#f59e0b" stroke-width="1.5" marker-end="url(#arr)" stroke-opacity="0.6"/>
+
+        <!-- ── Row 4: Model ── -->
+        <g onclick="highlightNode('n-model')" id="n-model" style="cursor:pointer">
+          <rect x="290" y="414" width="320" height="54" rx="8" fill="#1a0f00" stroke="#f97316" stroke-width="1"/>
+          <text x="450" y="433" text-anchor="middle" dominant-baseline="central" fill="#fb923c" font-family="Inter,sans-serif" font-size="12" font-weight="600">1D CNN-LSTM / XGBoost</text>
+          <text x="450" y="451" text-anchor="middle" dominant-baseline="central" fill="#7c2d12" font-family="Inter,sans-serif" font-size="11">Weighted BCE · Kernels 3,5,7 · 128 LSTM units</text>
+        </g>
+
+        <!-- output fork -->
+        <line x1="380" y1="468" x2="200" y2="500" stroke="#f97316" stroke-width="1.2" stroke-opacity="0.45" marker-end="url(#arr)"/>
+        <line x1="520" y1="468" x2="700" y2="500" stroke="#f97316" stroke-width="1.2" stroke-opacity="0.45" marker-end="url(#arr)"/>
+
+        <!-- ── Row 5: Outputs ── -->
+        <g onclick="highlightNode('n-shap')" id="n-shap" style="cursor:pointer">
+          <rect x="80" y="490" width="230" height="20" rx="6" fill="#102820" stroke="#22c55e" stroke-width="0.8"/>
+          <text x="195" y="500" text-anchor="middle" dominant-baseline="central" fill="#4ade80" font-family="Inter,sans-serif" font-size="11" font-weight="600">SHAP · Attention Maps</text>
+        </g>
+
+        <g onclick="highlightNode('n-metrics')" id="n-metrics" style="cursor:pointer">
+          <rect x="590" y="490" width="230" height="20" rx="6" fill="#1c1000" stroke="#fbbf24" stroke-width="0.8"/>
+          <text x="705" y="500" text-anchor="middle" dominant-baseline="central" fill="#fcd34d" font-family="Inter,sans-serif" font-size="11" font-weight="600">AUROC · Sens @ Spec 95%</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+
+  <!-- STEP EXPLORER -->
+  <div class="section-label">Methodology Deep-Dive</div>
+  <div class="step-explorer">
+    <div class="step-tabs">
+      <button class="step-tab active" onclick="showStep(0)"><span class="step-num">1</span>Data & Alignment</button>
+      <button class="step-tab" onclick="showStep(1)"><span class="step-num">2</span>Feature Engineering</button>
+      <button class="step-tab" onclick="showStep(2)"><span class="step-num">3</span>Deep Learning</button>
+      <button class="step-tab" onclick="showStep(3)"><span class="step-num">4</span>Explainability</button>
+    </div>
+
+    <div class="step-panels">
+      <!-- Step 1 -->
+      <div class="step-panel active" id="step-0">
+        <div class="step-card">
+          <div class="step-card-head">Data Acquisition</div>
+          <h3>GenBank Genome Download</h3>
+          <p>Download 500–1000 complete SARS-CoV-2 genomes spanning major lineages (B.1.1.7, B.1.351, P.1, B.1.617.2, BA.*, XBB) to capture evolutionary diversity across variants of concern.</p>
+          <div class="code-block"><span class="kw">from</span> Bio <span class="kw">import</span> Entrez, SeqIO<br>Entrez.email = <span class="str">"team@ejust.edu.eg"</span><br>handle = Entrez.<span class="fn">esearch</span>(db=<span class="str">"nucleotide"</span>,<br>  term=<span class="str">"SARS-CoV-2[Organism] complete"</span>)<br><span class="cm"># Fetch → FASTA → filter complete genomes</span></div>
+        </div>
+        <div class="step-card">
+          <div class="step-card-head">Alignment</div>
+          <h3>Codon-Aware MSA (MAFFT)</h3>
+          <p>Execute codon-aware Multiple Sequence Alignment yielding ~9,600 aligned codon positions. Codon-awareness prevents frameshifts that corrupt dN/dS calculations downstream.</p>
+          <div class="code-block"><span class="cm"># MAFFT codon-aware alignment</span><br>mafft --auto --thread 8 \<br>  --codon genomes.fasta \<br>  > aligned_codons.fasta<br><br><span class="cm"># QC: mask positions &gt;50% gap</span><br>trimal -gt 0.5 -in aligned.fasta</div>
+        </div>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="step-panel" id="step-1">
+        <div class="step-card">
+          <div class="step-card-head">Structural Features</div>
+          <h3>ConSurf + Entropy Scores</h3>
+          <p>Compute per-residue conservation scores (ConSurf), Shannon entropy over the column distribution, relative solvent accessibility (RSA) from AlphaFold structures, and PSIPRED secondary structure predictions.</p>
+          <div class="code-block"><span class="kw">import</span> numpy <span class="kw">as</span> np<br><span class="kw">def</span> <span class="fn">shannon_entropy</span>(col):<br>  freqs = np.<span class="fn">unique</span>(col, return_counts=<span class="kw">True</span>)[1]<br>  p = freqs / freqs.<span class="fn">sum</span>()<br>  <span class="kw">return</span> -np.<span class="fn">sum</span>(p * np.<span class="fn">log2</span>(p + 1e-9))</div>
+        </div>
+        <div class="step-card">
+          <div class="step-card-head">Evolutionary + Embeddings</div>
+          <h3>dN/dS + ESM-2</h3>
+          <p>Sliding-window dN/dS ratios (KaKs_Calculator), CAI, GC content. ESM-2 (650M params) extracts 1280-dim vectors from the final hidden layer per codon position — providing learned evolutionary context unavailable from sequence alone.</p>
+          <div class="code-block"><span class="kw">from</span> esm <span class="kw">import</span> pretrained<br>model, alphabet = pretrained.<span class="fn">esm2_t33_650M_UR50D</span>()<br>batch = alphabet.<span class="fn">get_batch_converter</span>()<br>_, _, tokens = <span class="fn">batch</span>(sequences)<br>results = <span class="fn">model</span>(tokens, repr_layers=[<span class="str">33</span>])<br>embeddings = results[<span class="str">"representations"</span>][<span class="str">33</span>]</div>
+        </div>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="step-panel" id="step-2">
+        <div class="step-card">
+          <div class="step-card-head">Architecture</div>
+          <h3>1D CNN-LSTM Network</h3>
+          <p>Input: concatenated 1295-dim feature matrix per codon. Three parallel 1D Conv layers (kernels 3, 5, 7) capture local motifs at different scales; their outputs are concatenated and fed to an LSTM (128 hidden units) for long-range genomic dependencies. Output: hotspot probability per codon.</p>
+          <div class="code-block"><span class="cm"># Parallel convolution branches</span><br>x3 = <span class="fn">Conv1D</span>(64, kernel_size=3, activation=<span class="str">'relu'</span>)(x)<br>x5 = <span class="fn">Conv1D</span>(64, kernel_size=5, activation=<span class="str">'relu'</span>)(x)<br>x7 = <span class="fn">Conv1D</span>(64, kernel_size=7, activation=<span class="str">'relu'</span>)(x)<br>merged = <span class="fn">Concatenate</span>()([x3, x5, x7])<br>out = <span class="fn">LSTM</span>(128, return_sequences=<span class="kw">True</span>)(merged)</div>
+        </div>
+        <div class="step-card">
+          <div class="step-card-head">Training Strategy</div>
+          <h3>Class Imbalance & Calibration</h3>
+          <p>Hotspot labels are rare (&lt;5% of codons). SMOTE oversampling addresses imbalance in training. Weighted binary cross-entropy during training. Threshold tuned to maximize sensitivity at 95% specificity — the clinically relevant operating point.</p>
+          <div class="code-block"><span class="kw">from</span> sklearn.calibration <span class="kw">import</span> CalibratedClassifierCV<br>loss = <span class="fn">binary_crossentropy</span>(<br>  class_weight={0: 1.0, 1: 20.0})<br><br><span class="cm"># Find threshold @ 95% specificity</span><br>idx = np.<span class="fn">where</span>(specificity >= 0.95)[0][0]<br>opt_threshold = thresholds[idx]</div>
+        </div>
+      </div>
+
+      <!-- Step 4 -->
+      <div class="step-panel" id="step-3">
+        <div class="step-card">
+          <div class="step-card-head">Model Explainability</div>
+          <h3>SHAP Analysis</h3>
+          <p>TreeExplainer (for XGBoost baseline) and DeepExplainer (for CNN-LSTM) generate per-feature SHAP values, revealing which structural/evolutionary signals drive hotspot predictions. Summary plots validate biological relevance — ESM-2 embedding dimensions and entropy scores should dominate.</p>
+          <div class="code-block"><span class="kw">import</span> shap<br>explainer = shap.<span class="fn">DeepExplainer</span>(model, X_bg)<br>shap_vals = explainer.<span class="fn">shap_values</span>(X_test)<br>shap.<span class="fn">summary_plot</span>(shap_vals, X_test,<br>  feature_names=feature_cols)</div>
+        </div>
+        <div class="step-card">
+          <div class="step-card-head">Benchmarking</div>
+          <h3>Validation Against Known VoCs</h3>
+          <p>Cross-validate predictions against catalogued SARS-CoV-2 variants of concern. Hotspot predictions should overlap with known immune-escape and ACE2-binding residues on the Spike protein — providing biological ground truth for model evaluation beyond held-out test accuracy.</p>
+          <div class="code-block"><span class="cm"># Known VoC sites (Spike)</span><br>voc_sites = {417, 452, 484, 501, 614,<br>  681, 950, 1118}  <span class="cm"># key residues</span><br>overlap = predicted_hotspots & voc_sites<br>recall_voc = <span class="fn">len</span>(overlap) / <span class="fn">len</span>(voc_sites)<br><span class="fn">print</span>(<span class="str">f"VoC recall: {recall_voc:.1%}"</span>)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- METRICS -->
+  <div class="section-label">Target Performance Metrics</div>
+  <div class="metrics-row">
+    <div class="metric">
+      <div class="metric-label">Primary Metric</div>
+      <div class="metric-value">AUROC</div>
+      <div class="metric-sub">≥ 0.85 target</div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">Sensitivity @ Spec 95%</div>
+      <div class="metric-value">Sens₉₅</div>
+      <div class="metric-sub">Clinical operating point</div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">Feature Dim</div>
+      <div class="metric-value">1,295</div>
+      <div class="metric-sub">Per codon position</div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">Sequences</div>
+      <div class="metric-value">500–1k</div>
+      <div class="metric-sub">GenBank genomes</div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">Explainability</div>
+      <div class="metric-value">SHAP</div>
+      <div class="metric-sub">Deep + Tree explainers</div>
+    </div>
+  </div>
+
+  <!-- TIMELINE -->
+  <div class="section-label">Research Timeline</div>
+  <div class="card">
+    <ul class="timeline">
+      <li>
+        <div class="tl-date">20 June 2026</div>
+        <div class="tl-title">Project Kickoff &amp; Data Access</div>
+        <div class="tl-desc">GenBank bulk download, repository setup, team onboarding, initial EDA on genome diversity.</div>
+      </li>
+      <li>
+        <div class="tl-date">10 July 2026</div>
+        <div class="tl-title">Pipeline Implementation</div>
+        <div class="tl-desc">MAFFT MSA completion; extraction of structural (ConSurf, PSIPRED) and evolutionary (dN/dS, CAI) features.</div>
+      </li>
+      <li>
+        <div class="tl-date">10 August 2026</div>
+        <div class="tl-title">Model Training &amp; ESM-2 Integration</div>
+        <div class="tl-desc">Baseline XGBoost, then CNN-LSTM with ESM-2 embeddings. Hyperparameter search via Optuna.</div>
+      </li>
+      <li>
+        <div class="tl-date">30 August 2026</div>
+        <div class="tl-title">Explainability &amp; Validation</div>
+        <div class="tl-desc">SHAP analysis, attention map generation, benchmarking against known VoC residues.</div>
+      </li>
+      <li>
+        <div class="tl-date">15 September 2026</div>
+        <div class="tl-title">Final Deliverable</div>
+        <div class="tl-desc">Code freeze, IEEE EMBC paper submission, repository documentation and reproducibility check.</div>
+      </li>
+    </ul>
+  </div>
+
+</div>
+
+<div class="page-footer">Ri-Sō 理創 Research Program 2026 · IEEE EMBS E-JUST · Viral Mutation Track</div>
+
+<script>
+function showStep(i){
+  document.querySelectorAll('.step-tab').forEach((t,idx)=>t.classList.toggle('active',idx===i));
+  document.querySelectorAll('.step-panel').forEach((p,idx)=>p.classList.toggle('active',idx===i));
+}
+function highlightNode(id){
+  document.querySelectorAll('[id^="n-"]').forEach(g=>{
+    const r=g.querySelector('rect');
+    if(r)r.style.filter='';
+  });
+  const node=document.getElementById(id);
+  if(node){const r=node.querySelector('rect');if(r)r.style.filter='brightness(1.4)';}
+}
+</script>
+</body>
+</html>
